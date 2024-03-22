@@ -12,6 +12,8 @@ import {
   getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut,
 } from "firebase/auth";
 
 export default function App() {
@@ -20,6 +22,7 @@ export default function App() {
   const [FormData, setFormData] = useState({
     email: "",
     password: "",
+    currentUser: "",
   });
   const [users, setUsers] = useState([]);
   const [editUserData, setEditUserData] = useState({
@@ -28,6 +31,35 @@ export default function App() {
   });
 
   useEffect(() => getUserDataFromFirestore, []);
+  useEffect(() => checkLoginStatus, []);
+
+  async function checkLoginStatus() {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setFormData((prevFormData) => {
+          return {
+            ...prevFormData,
+            currentUser: user.email,
+          };
+        });
+      } else {
+        console.log("User is signed out");
+      }
+    });
+  }
+
+  async function signOutFirbase() {
+    signOut(auth)
+      .then(() => {
+        alert("Signed out!");
+        setFormData((prevFormData) => {
+          return { ...prevFormData, currentUser: "" };
+        });
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
+  }
 
   async function getUserDataFromFirestore() {
     try {
@@ -132,6 +164,23 @@ export default function App() {
     <>
       <div className="form">
         <h1>Firebase</h1>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-start",
+            alignItems: "center",
+            gap: "2em",
+          }}
+        >
+          <h2>
+            {FormData.currentUser
+              ? "hello " + FormData.currentUser.split("@")[0]
+              : "Signed out"}
+          </h2>
+          {FormData.currentUser && (
+            <button onClick={signOutFirbase}>sign out</button>
+          )}
+        </div>
         <input
           type="email"
           placeholder="email"
