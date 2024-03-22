@@ -49,10 +49,7 @@ export default function App() {
   }
 
   async function updateEmail(docId) {
-    console.log(editUserData.email);
     const docRef = doc(db, "users", docId);
-
-    // Set the "capital" field of the city 'DC'
     await updateDoc(docRef, {
       email: editUserData.email,
       addedOn: Date.now(),
@@ -62,10 +59,7 @@ export default function App() {
   }
 
   async function updatePassword(docId) {
-    console.log(editUserData.password);
     const docRef = doc(db, "users", docId);
-
-    // Set the "capital" field of the city 'DC'
     await updateDoc(docRef, {
       password: editUserData.password,
       addedOn: Date.now(),
@@ -125,7 +119,6 @@ export default function App() {
   }
 
   function toggleEditBtn(id) {
-    console.log(id);
     setUsers((prevUsers) => {
       return prevUsers.map((user) => {
         if (user.id == id) {
