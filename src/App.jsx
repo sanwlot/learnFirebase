@@ -15,6 +15,8 @@ import {
   onAuthStateChanged,
   signOut,
 } from "firebase/auth";
+import "bootstrap/dist/css/bootstrap.min.css";
+import NavbarHeader from "./components/NavbarHeader";
 
 export default function App() {
   const auth = getAuth();
@@ -162,113 +164,151 @@ export default function App() {
   }
   return (
     <>
-      <div className="form">
-        <h1>Firebase</h1>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "flex-start",
-            alignItems: "center",
-            gap: "2em",
-          }}
-        >
-          <h2>
-            {FormData.currentUser
-              ? "hello " + FormData.currentUser.split("@")[0]
-              : "Signed out"}
-          </h2>
-          {FormData.currentUser && (
-            <button onClick={signOutFirbase}>sign out</button>
-          )}
+      <NavbarHeader />
+      <div style={{ margin: "20px" }}>
+        <div className="form">
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-start",
+              alignItems: "center",
+              gap: "2em",
+            }}
+          >
+            <h2>
+              {FormData.currentUser
+                ? "hello " + FormData.currentUser.split("@")[0]
+                : "Signed out"}
+            </h2>
+            {FormData.currentUser && (
+              <button
+                className="btn btn-danger btn-sm"
+                onClick={signOutFirbase}
+              >
+                sign out
+              </button>
+            )}
+          </div>
+          <input
+            className="form-control"
+            type="email"
+            placeholder="email"
+            value={FormData.email}
+            name="email"
+            onChange={handleChange}
+          />
+          <input
+            className="form-control"
+            type="password"
+            placeholder="password"
+            value={FormData.password}
+            name="password"
+            onChange={handleChange}
+          />
+          <br />
+          <div className="btn-group">
+            <button className="btn btn-success" onClick={handleSignIn}>
+              SignIn
+            </button>
+            <button className="btn btn-primary" onClick={handleSignUp}>
+              SignUp
+            </button>
+            <button
+              className="btn btn-secondary"
+              onClick={addUserDataToFirestore}
+            >
+              Add Data
+            </button>
+          </div>
         </div>
-        <input
-          type="email"
-          placeholder="email"
-          value={FormData.email}
-          name="email"
-          onChange={handleChange}
-        />
-        <input
-          type="password"
-          placeholder="password"
-          value={FormData.password}
-          name="password"
-          onChange={handleChange}
-        />
-        <br />
-        <button onClick={handleSignIn}>SignIn</button>
-        <button onClick={handleSignUp}>SignUp</button>
-        <button onClick={addUserDataToFirestore}>Add Data</button>
-      </div>
-      <br />
-      <br />
-      <br />
-
-      <h2>CRUD Firestore</h2>
-      <table style={{ padding: "20px", background: "lightgray" }}>
-        <thead>
-          <tr>
-            <th>Email</th>
-            <th>Password</th>
-            <th>Date</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users
-            .toSorted((a, b) => b.addedOn - a.addedOn)
-            .map((user) => (
-              <tr key={user.id}>
-                <td>
-                  {user.email}{" "}
-                  {user.showEdit && (
-                    <>
-                      <input
-                        type="email"
-                        placeholder="edit email..."
-                        onChange={(e) =>
-                          setEditUserData({
-                            ...editUserData,
-                            email: e.target.value,
-                          })
-                        }
-                      />
-                      <button onClick={() => updateEmail(user.id)}>Save</button>
-                    </>
-                  )}
-                </td>
-                <td>
-                  {user.password}
-                  {user.showEdit && (
-                    <>
-                      <input
-                        type="text"
-                        placeholder="edit password..."
-                        onChange={(e) =>
-                          setEditUserData({
-                            ...editUserData,
-                            password: e.target.value,
-                          })
-                        }
-                      />
-                      <button onClick={() => updatePassword(user.id)}>
-                        Save
+        <h2 className="mt-5">CRUD Firestore</h2>
+        <table
+          className="table table-striped table-hover"
+          style={{ padding: "20px", background: "lightgray" }}
+        >
+          <thead>
+            <tr>
+              <th>Email</th>
+              <th>Password</th>
+              <th>Date</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {users
+              .toSorted((a, b) => b.addedOn - a.addedOn)
+              .map((user) => (
+                <tr key={user.id}>
+                  <td>
+                    {user.email}{" "}
+                    {user.showEdit && (
+                      <>
+                        <input
+                          className="form-control"
+                          type="email"
+                          placeholder="edit email..."
+                          onChange={(e) =>
+                            setEditUserData({
+                              ...editUserData,
+                              email: e.target.value,
+                            })
+                          }
+                        />
+                        <button
+                          className="btn btn-success btn-sm"
+                          onClick={() => updateEmail(user.id)}
+                        >
+                          Save
+                        </button>
+                      </>
+                    )}
+                  </td>
+                  <td>
+                    {user.password}
+                    {user.showEdit && (
+                      <>
+                        <input
+                          className="form-control"
+                          type="text"
+                          placeholder="edit password..."
+                          onChange={(e) =>
+                            setEditUserData({
+                              ...editUserData,
+                              password: e.target.value,
+                            })
+                          }
+                        />
+                        <button
+                          className="btn btn-success btn-sm"
+                          onClick={() => updatePassword(user.id)}
+                        >
+                          Save
+                        </button>
+                      </>
+                    )}
+                  </td>
+                  <td>{user.addedOn}</td>
+                  <td>
+                    <div className="btn-group">
+                      <button
+                        className="btn btn-warning btn-sm"
+                        onClick={() => toggleEditBtn(user.id)}
+                      >
+                        {user.showEdit ? "Hide" : "Edit"}
                       </button>
-                    </>
-                  )}
-                </td>
-                <td>{user.addedOn}</td>
-                <td>
-                  <button onClick={() => toggleEditBtn(user.id)}>
-                    {user.showEdit ? "Hide" : "Edit"}
-                  </button>
-                  <button onClick={() => deleteDocument(user.id)}>
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-        </tbody>
-      </table>
+                      <button
+                        className="btn btn-danger btn-sm"
+                        onClick={() => deleteDocument(user.id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+      </div>
     </>
   );
 }
