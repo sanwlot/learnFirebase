@@ -17,6 +17,7 @@ import {
 } from "firebase/auth";
 import "bootstrap/dist/css/bootstrap.min.css";
 import NavbarHeader from "./components/NavbarHeader";
+import Footer from "./components/Footer";
 
 export default function App() {
   const auth = getAuth();
@@ -309,6 +310,7 @@ export default function App() {
           </tbody>
         </table>
       </div>
+      <Footer />
     </>
   );
 }
